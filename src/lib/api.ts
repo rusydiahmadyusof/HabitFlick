@@ -66,3 +66,24 @@ export const habitAPI = {
   >(functions, "completeHabit"),
 };
 
+// Prioritization API
+export const prioritizationAPI = {
+  prioritizeTasks: httpsCallable<
+    { taskIds?: string[] },
+    { tasks: Task[] }
+  >(functions, "prioritizeTasks"),
+  getSuggestedOrder: httpsCallable<
+    {},
+    { morning: Task[]; afternoon: Task[]; evening: Task[] }
+  >(functions, "getSuggestedOrder"),
+  getUserInsights: httpsCallable<
+    {},
+    {
+      bestCompletionTime: string;
+      averageTasksPerDay: number;
+      mostProductiveDay: string;
+      suggestions: string[];
+    }
+  >(functions, "getUserInsights"),
+};
+

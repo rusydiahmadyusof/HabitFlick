@@ -22,3 +22,10 @@ export {
   completeHabit,
 } from "./api/habits";
 
+// Export Prioritization API functions
+export {
+  prioritizeTasks,
+  getSuggestedOrder,
+  getUserInsights,
+} from "./api/prioritization";
+
