@@ -34,18 +34,35 @@ export const taskAPI = {
   ),
 };
 
-// Habit API (will be implemented in next step)
+// Habit API
 export const habitAPI = {
   getHabits: httpsCallable<{}, { habits: Habit[] }>(
     functions,
     "getHabits"
   ),
-  createHabit: httpsCallable<any, Habit>(functions, "createHabit"),
-  updateHabit: httpsCallable<any, Habit>(functions, "updateHabit"),
-  deleteHabit: httpsCallable<any, { success: boolean }>(
+  createHabit: httpsCallable<
+    {
+      title: string;
+      description?: string;
+      frequency: "daily" | "weekly" | "custom";
+      customSchedule?: {
+        daysOfWeek: number[];
+        timesOfDay?: string[];
+      };
+    },
+    Habit
+  >(functions, "createHabit"),
+  updateHabit: httpsCallable<
+    { habitId: string; updates: Partial<Habit> },
+    Habit
+  >(functions, "updateHabit"),
+  deleteHabit: httpsCallable<{ habitId: string }, { success: boolean }>(
     functions,
     "deleteHabit"
   ),
-  completeHabit: httpsCallable<any, Habit>(functions, "completeHabit"),
+  completeHabit: httpsCallable<
+    { habitId: string; notes?: string },
+    Habit
+  >(functions, "completeHabit"),
 };
 

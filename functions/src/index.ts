@@ -13,3 +13,12 @@ export {
   completeTask,
 } from "./api/tasks";
 
+// Export Habit API functions
+export {
+  getHabits,
+  createHabit,
+  updateHabit,
+  deleteHabit,
+  completeHabit,
+} from "./api/habits";
+
