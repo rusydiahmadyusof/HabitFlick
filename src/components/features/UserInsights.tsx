@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { usePrioritization } from "@/hooks/usePrioritization";
+import { useTaskStore } from "@/store/taskStore";
 
 export default function UserInsights() {
   const { getUserInsights, loading, error } = usePrioritization();
+  const tasks = useTaskStore((state) => state.tasks);
   const [insights, setInsights] = useState<{
     bestCompletionTime: string;
     averageTasksPerDay: number;
@@ -16,7 +18,8 @@ export default function UserInsights() {
 
   const loadInsights = async () => {
     try {
-      const data = await getUserInsights();
+      // Use cached tasks from store to avoid redundant query
+      const data = await getUserInsights(Array.isArray(tasks) && tasks.length > 0 ? tasks : undefined);
       setInsights(data);
     } catch (err) {
       console.error("Error loading insights:", err);
@@ -24,8 +27,12 @@ export default function UserInsights() {
   };
 
   useEffect(() => {
-    loadInsights();
-  }, []);
+    // Only load insights if we have tasks loaded
+    if ((Array.isArray(tasks) && tasks.length > 0) || !loading) {
+      loadInsights();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [Array.isArray(tasks) ? tasks.length : 0]);
 
   if (loading) {
     return (

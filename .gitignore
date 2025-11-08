@@ -48,3 +48,4 @@ ui-debug.log
 env.example
 QUICK_TEST.md
 masterprompt.md
+firestore.rules

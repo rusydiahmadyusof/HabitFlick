@@ -160,10 +160,22 @@ export const firestoreTaskAPI = {
   },
 
   async completeTask(taskId: string): Promise<Task> {
-    return this.updateTask(taskId, {
+    const completedTask = await this.updateTask(taskId, {
       status: "completed",
       completedAt: new Date(),
     } as any);
+    
+    // Award base points for task completion (async, don't wait)
+    import("./gamificationService").then(({ awardTaskCompletionPoints }) => {
+      awardTaskCompletionPoints(completedTask).catch(console.error);
+    });
+    
+    // Check for badges (async, don't wait)
+    import("./gamificationService").then(({ checkTaskCompletionBadges }) => {
+      checkTaskCompletionBadges(completedTask).catch(console.error);
+    });
+    
+    return completedTask;
   },
 };
 
@@ -215,13 +227,21 @@ export const firestoreHabitAPI = {
     const docRef = await addDoc(collection(db, "habits"), habitDoc);
     const docSnap = await getDoc(docRef);
 
-    return {
+    const newHabit = {
       id: docRef.id,
       ...docSnap.data(),
       createdAt: new Date(),
       currentStreak: 0,
       longestStreak: 0,
+      streak: 0, // Also set streak for compatibility
     } as Habit;
+    
+    // Check for badges (async, don't wait)
+    import("./gamificationService").then(({ checkHabitCreationBadges }) => {
+      checkHabitCreationBadges().catch(console.error);
+    });
+    
+    return newHabit;
   },
 
   async updateHabit(habitId: string, updates: Partial<Habit>): Promise<Habit> {
@@ -335,22 +355,37 @@ export const firestoreHabitAPI = {
     });
 
     const updatedDoc = await getDoc(habitRef);
-    return {
+    const updatedHabit = {
       id: updatedDoc.id,
       ...updatedDoc.data(),
       createdAt: timestampToDate(updatedDoc.data().createdAt) || new Date(),
       lastCompleted: today,
       currentStreak,
       longestStreak,
+      streak: currentStreak, // Also set streak for compatibility
     } as Habit;
+    
+    // Check for badges (async, don't wait)
+    import("./gamificationService").then(({ checkHabitStreakBadges }) => {
+      checkHabitStreakBadges(updatedHabit).catch(console.error);
+    });
+    
+    return updatedHabit;
   },
 };
 
 // Prioritization API (client-side)
+// Accepts optional tasks parameter to avoid redundant queries
 export const firestorePrioritizationAPI = {
-  async prioritizeTasks(taskIds?: string[]): Promise<Task[]> {
-    const tasks = await firestoreTaskAPI.getTasks();
-    let filteredTasks = tasks.filter((t) => t.status === "pending" || t.status === "in-progress");
+  async prioritizeTasks(taskIds?: string[], tasks?: Task[]): Promise<Task[]> {
+    let taskList = tasks;
+    if (!taskList || !Array.isArray(taskList)) {
+      taskList = await firestoreTaskAPI.getTasks();
+    }
+    if (!Array.isArray(taskList)) {
+      taskList = [];
+    }
+    let filteredTasks = taskList.filter((t) => t.status === "pending" || t.status === "in-progress");
 
     if (taskIds && taskIds.length > 0) {
       filteredTasks = filteredTasks.filter((t) => taskIds.includes(t.id));
@@ -359,13 +394,19 @@ export const firestorePrioritizationAPI = {
     return sortTasksByPriority(filteredTasks);
   },
 
-  async getSuggestedOrder(): Promise<{
+  async getSuggestedOrder(tasks?: Task[]): Promise<{
     morning: Task[];
     afternoon: Task[];
     evening: Task[];
   }> {
-    const tasks = await firestoreTaskAPI.getTasks();
-    const pendingTasks = tasks.filter((t) => t.status === "pending" || t.status === "in-progress");
+    let taskList = tasks;
+    if (!taskList || !Array.isArray(taskList)) {
+      taskList = await firestoreTaskAPI.getTasks();
+    }
+    if (!Array.isArray(taskList)) {
+      taskList = [];
+    }
+    const pendingTasks = taskList.filter((t) => t.status === "pending" || t.status === "in-progress");
     const sorted = sortTasksByPriority(pendingTasks);
 
     const morning: Task[] = [];
@@ -386,18 +427,24 @@ export const firestorePrioritizationAPI = {
     return { morning, afternoon, evening };
   },
 
-  async getUserInsights(): Promise<{
+  async getUserInsights(tasks?: Task[]): Promise<{
     bestCompletionTime: string;
     averageTasksPerDay: number;
     mostProductiveDay: string;
     suggestions: string[];
   }> {
-    const tasks = await firestoreTaskAPI.getTasks();
+    let taskList = tasks;
+    if (!taskList || !Array.isArray(taskList)) {
+      taskList = await firestoreTaskAPI.getTasks();
+    }
+    if (!Array.isArray(taskList)) {
+      taskList = [];
+    }
     const now = new Date();
     const thirtyDaysAgo = new Date(now);
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const completedTasks = tasks.filter(
+    const completedTasks = taskList.filter(
       (t) => t.status === "completed" && t.completedAt && t.completedAt >= thirtyDaysAgo
     );
 
@@ -453,7 +500,7 @@ export const firestorePrioritizationAPI = {
       suggestions.push(`You're most productive on ${mostProductiveDay}s. Use this day for important tasks!`);
     }
 
-    const pendingTasks = tasks.filter((t) => t.status === "pending");
+    const pendingTasks = taskList.filter((t) => t.status === "pending");
     if (pendingTasks.length > 10) {
       suggestions.push("You have many pending tasks. Consider breaking them into smaller tasks!");
     }

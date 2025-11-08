@@ -2,13 +2,34 @@
 
 import Link from "next/link";
 import { useTasks } from "@/hooks/useTasks";
+import { useBadges } from "@/hooks/useBadges";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import DailyPlanCard from "@/components/features/DailyPlanCard";
 import UserInsights from "@/components/features/UserInsights";
 
 export default function Home() {
-  const { completeTask, deleteTask } = useTasks();
+  const { completeTask, deleteTask, loading: tasksLoading } = useTasks();
+  const { getTotalPoints, getLevelInfo, loading: badgesLoading } = useBadges();
+  
+  // Show loading state while data is being fetched
+  if (badgesLoading) {
+    return (
+      <main className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <p className="mt-4 text-gray-600">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+  
+  const levelInfo = getLevelInfo();
+  const totalPoints = getTotalPoints();
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -18,9 +39,57 @@ export default function Home() {
             <h1 className="text-5xl font-bold text-gray-900 mb-4">
               Welcome to HabitFlick
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-gray-600 mb-4">
               Your productivity and habit tracking companion
             </p>
+            <Card className="p-6 max-w-2xl mx-auto">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-center">
+                  <p className="text-sm text-gray-600">Level</p>
+                  <p className="text-3xl font-bold text-blue-600">{levelInfo.level}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm text-gray-600">Total Points</p>
+                  <p className="text-3xl font-bold text-purple-600">{totalPoints}</p>
+                </div>
+              </div>
+              
+              <div className="mt-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-medium text-gray-700">
+                    Progress to Level {levelInfo.level + 1}
+                  </span>
+                  <span className="text-sm text-gray-600">
+                    {levelInfo.pointsToNext} points needed
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                  {(() => {
+                    const nextLevelPoints = levelInfo.currentLevelPoints + levelInfo.pointsToNext;
+                    const pointsInCurrentLevel = totalPoints - levelInfo.currentLevelPoints;
+                    const pointsNeededForLevel = nextLevelPoints - levelInfo.currentLevelPoints;
+                    const progressPercent = Math.min(100, Math.max(0, (pointsInCurrentLevel / pointsNeededForLevel) * 100));
+                    
+                    return (
+                      <div
+                        className="bg-gradient-to-r from-blue-500 to-purple-500 h-4 rounded-full transition-all duration-500 flex items-center justify-end pr-2"
+                        style={{ width: `${progressPercent}%` }}
+                      >
+                        {progressPercent > 15 && (
+                          <span className="text-xs font-semibold text-white">
+                            {Math.round(progressPercent)}%
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </div>
+                <div className="flex justify-between mt-2 text-xs text-gray-500">
+                  <span>Level {levelInfo.level} start: {levelInfo.currentLevelPoints} pts</span>
+                  <span>Level {levelInfo.level + 1} start: {levelInfo.currentLevelPoints + levelInfo.pointsToNext} pts</span>
+                </div>
+              </div>
+            </Card>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-6 mb-8">

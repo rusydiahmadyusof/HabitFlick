@@ -6,12 +6,12 @@ export function usePrioritization() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const prioritizeTasks = async (taskIds?: string[]) => {
+  const prioritizeTasks = async (taskIds?: string[], tasks?: Task[]) => {
     setLoading(true);
     setError(null);
     try {
-      const tasks = await firestorePrioritizationAPI.prioritizeTasks(taskIds);
-      return tasks;
+      const result = await firestorePrioritizationAPI.prioritizeTasks(taskIds, tasks);
+      return result;
     } catch (err: any) {
       setError(err.message || "Failed to prioritize tasks");
       throw err;
@@ -20,11 +20,11 @@ export function usePrioritization() {
     }
   };
 
-  const getSuggestedOrder = async () => {
+  const getSuggestedOrder = async (tasks?: Task[]) => {
     setLoading(true);
     setError(null);
     try {
-      const result = await firestorePrioritizationAPI.getSuggestedOrder();
+      const result = await firestorePrioritizationAPI.getSuggestedOrder(tasks);
       return result;
     } catch (err: any) {
       setError(err.message || "Failed to get suggested order");
@@ -34,11 +34,11 @@ export function usePrioritization() {
     }
   };
 
-  const getUserInsights = async () => {
+  const getUserInsights = async (tasks?: Task[]) => {
     setLoading(true);
     setError(null);
     try {
-      const insights = await firestorePrioritizationAPI.getUserInsights();
+      const insights = await firestorePrioritizationAPI.getUserInsights(tasks);
       return insights;
     } catch (err: any) {
       setError(err.message || "Failed to get user insights");

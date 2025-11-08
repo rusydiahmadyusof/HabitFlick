@@ -41,11 +41,11 @@ export default function TasksPage() {
     }
   };
 
-  const pendingTasks = tasks.filter((t) => t.status === "pending");
-  const inProgressTasks = tasks.filter((t) => t.status === "in-progress");
-  const completedTasks = tasks.filter((t) => t.status === "completed");
+  const pendingTasks = (tasks || []).filter((t) => t.status === "pending");
+  const inProgressTasks = (tasks || []).filter((t) => t.status === "in-progress");
+  const completedTasks = (tasks || []).filter((t) => t.status === "completed");
 
-  if (loading && tasks.length === 0) {
+  if (loading && (!tasks || tasks.length === 0)) {
     return (
       <div className="container mx-auto px-4 py-8">
         <p>Loading tasks...</p>

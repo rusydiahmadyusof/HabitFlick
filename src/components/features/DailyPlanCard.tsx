@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { usePrioritization } from "@/hooks/usePrioritization";
+import { useTaskStore } from "@/store/taskStore";
 import TaskCard from "@/components/features/TaskCard";
 import type { Task } from "@/types";
 
@@ -17,6 +18,7 @@ export default function DailyPlanCard({
   onTaskDelete,
 }: DailyPlanCardProps) {
   const { getSuggestedOrder, loading, error } = usePrioritization();
+  const tasks = useTaskStore((state) => state.tasks);
   const [plan, setPlan] = useState<{
     morning: Task[];
     afternoon: Task[];
@@ -27,7 +29,8 @@ export default function DailyPlanCard({
   const generatePlan = async () => {
     setIsGenerating(true);
     try {
-      const suggestedOrder = await getSuggestedOrder();
+      // Use cached tasks from store to avoid redundant query
+      const suggestedOrder = await getSuggestedOrder(Array.isArray(tasks) && tasks.length > 0 ? tasks : undefined);
       setPlan(suggestedOrder);
     } catch (err) {
       console.error("Error generating plan:", err);
@@ -37,8 +40,12 @@ export default function DailyPlanCard({
   };
 
   useEffect(() => {
-    generatePlan();
-  }, []);
+    // Only generate plan if we have tasks loaded
+    if ((Array.isArray(tasks) && tasks.length > 0) || !loading) {
+      generatePlan();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [Array.isArray(tasks) ? tasks.length : 0]);
 
   if (loading || isGenerating) {
     return (

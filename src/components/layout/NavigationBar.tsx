@@ -14,6 +14,8 @@ export default function NavigationBar() {
     { href: "/", label: "Home" },
     { href: "/tasks", label: "Tasks" },
     { href: "/habits", label: "Habits" },
+    { href: "/badges", label: "Badges" },
+    { href: "/analytics", label: "Analytics" },
   ];
 
   const handleLogout = async () => {

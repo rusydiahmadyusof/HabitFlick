@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { usePathname } from "next/navigation";
 import NavigationBar from "@/components/layout/NavigationBar";
 import AuthGuard from "@/components/auth/AuthGuard";
+import BadgeNotificationProvider from "@/components/features/BadgeNotificationProvider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,7 +21,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         {!isAuthPage && <NavigationBar />}
-        {isAuthPage ? children : <AuthGuard>{children}</AuthGuard>}
+        {isAuthPage ? children : (
+          <AuthGuard>
+            <BadgeNotificationProvider />
+            {children}
+          </AuthGuard>
+        )}
       </body>
     </html>
   );
