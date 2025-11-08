@@ -1,12 +1,19 @@
+"use client";
+
 import Link from "next/link";
+import { useTasks } from "@/hooks/useTasks";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import DailyPlanCard from "@/components/features/DailyPlanCard";
+import UserInsights from "@/components/features/UserInsights";
 
 export default function Home() {
+  const { completeTask, deleteTask } = useTasks();
+
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold text-gray-900 mb-4">
               Welcome to HabitFlick
@@ -14,6 +21,18 @@ export default function Home() {
             <p className="text-xl text-gray-600 mb-8">
               Your productivity and habit tracking companion
             </p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-6 mb-8">
+            <div className="lg:col-span-2">
+              <DailyPlanCard
+                onTaskComplete={completeTask}
+                onTaskDelete={deleteTask}
+              />
+            </div>
+            <div>
+              <UserInsights />
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 mb-8">
