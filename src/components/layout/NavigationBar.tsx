@@ -11,6 +11,7 @@ export default function NavigationBar() {
     { href: "/", label: "Home" },
     { href: "/tasks", label: "Tasks" },
     { href: "/habits", label: "Habits" },
+    { href: "/test", label: "Test" },
   ];
 
   return (
