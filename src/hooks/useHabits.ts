@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { habitAPI } from "@/lib/api";
+import { firestoreHabitAPI } from "@/lib/firestoreApi";
 import { useHabitStore } from "@/store/habitStore";
 import type { Habit } from "@/types";
 
@@ -16,12 +16,7 @@ export function useHabits() {
     setLoading(true);
     setError(null);
     try {
-      const result = await habitAPI.getHabits({});
-      const fetchedHabits = result.data.habits.map((habit) => ({
-        ...habit,
-        createdAt: habit.createdAt ? new Date(habit.createdAt as any) : new Date(),
-        lastCompleted: habit.lastCompleted ? new Date(habit.lastCompleted as any) : undefined,
-      })) as Habit[];
+      const fetchedHabits = await firestoreHabitAPI.getHabits();
       setHabits(fetchedHabits);
     } catch (err: any) {
       setError(err.message || "Failed to load habits");
@@ -43,12 +38,7 @@ export function useHabits() {
     setLoading(true);
     setError(null);
     try {
-      const result = await habitAPI.createHabit(habitData);
-      const newHabit = {
-        ...result.data,
-        createdAt: new Date(result.data.createdAt as any),
-        lastCompleted: result.data.lastCompleted ? new Date(result.data.lastCompleted as any) : undefined,
-      } as Habit;
+      const newHabit = await firestoreHabitAPI.createHabit(habitData);
       addHabit(newHabit);
       return newHabit;
     } catch (err: any) {
@@ -63,12 +53,7 @@ export function useHabits() {
     setLoading(true);
     setError(null);
     try {
-      const result = await habitAPI.updateHabit({ habitId, updates });
-      const updatedHabit = {
-        ...result.data,
-        createdAt: new Date(result.data.createdAt as any),
-        lastCompleted: result.data.lastCompleted ? new Date(result.data.lastCompleted as any) : undefined,
-      } as Habit;
+      const updatedHabit = await firestoreHabitAPI.updateHabit(habitId, updates);
       updateHabit(habitId, updatedHabit);
       return updatedHabit;
     } catch (err: any) {
@@ -83,7 +68,7 @@ export function useHabits() {
     setLoading(true);
     setError(null);
     try {
-      await habitAPI.deleteHabit({ habitId });
+      await firestoreHabitAPI.deleteHabit(habitId);
       removeHabit(habitId);
     } catch (err: any) {
       setError(err.message || "Failed to delete habit");
@@ -97,12 +82,7 @@ export function useHabits() {
     setLoading(true);
     setError(null);
     try {
-      const result = await habitAPI.completeHabit({ habitId, notes });
-      const completedHabit = {
-        ...result.data,
-        createdAt: new Date(result.data.createdAt as any),
-        lastCompleted: new Date(result.data.lastCompleted as any),
-      } as Habit;
+      const completedHabit = await firestoreHabitAPI.completeHabit(habitId, notes);
       updateHabit(habitId, completedHabit);
       return completedHabit;
     } catch (err: any) {

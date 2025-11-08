@@ -1,9 +1,10 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 
-admin.initializeApp();
+// Use us-central1 region explicitly
+const region = functions.region("us-central1");
 
-export const getTasks = functions.https.onCall(async (data, context) => {
+export const getTasks = region.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -40,7 +41,7 @@ export const getTasks = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const createTask = functions.https.onCall(async (data, context) => {
+export const createTask = region.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -87,7 +88,7 @@ export const createTask = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const updateTask = functions.https.onCall(async (data, context) => {
+export const updateTask = region.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -151,7 +152,7 @@ export const updateTask = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const deleteTask = functions.https.onCall(async (data, context) => {
+export const deleteTask = region.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -200,7 +201,7 @@ export const deleteTask = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const completeTask = functions.https.onCall(async (data, context) => {
+export const completeTask = region.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",

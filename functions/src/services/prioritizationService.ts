@@ -1,5 +1,4 @@
 import * as admin from "firebase-admin";
-import type { Task } from "../../../src/types";
 
 /**
  * Calculate priority score for a task
@@ -7,6 +6,7 @@ import type { Task } from "../../../src/types";
  */
 export function calculatePriorityScore(task: any): number {
   let score = 0;
+  const now = new Date();
 
   // User-set priority weights
   const priorityWeights: Record<string, number> = {
@@ -19,7 +19,6 @@ export function calculatePriorityScore(task: any): number {
   // Due date urgency
   if (task.dueDate) {
     const dueDate = (task.dueDate as admin.firestore.Timestamp).toDate();
-    const now = new Date();
     const daysUntilDue = Math.ceil(
       (dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
     );
@@ -90,7 +89,7 @@ export function generateSuggestedOrder(tasks: any[]): {
   const afternoon: any[] = [];
   const evening: any[] = [];
 
-  sorted.forEach((task, index) => {
+  sorted.forEach((task) => {
     const score = calculatePriorityScore(task);
     
     if (score >= 150) {

@@ -1,7 +1,10 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 
-export const getHabits = functions.https.onCall(async (data, context) => {
+// Use us-central1 region explicitly
+const region = functions.region("us-central1");
+
+export const getHabits = region.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -34,7 +37,7 @@ export const getHabits = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const createHabit = functions.https.onCall(async (data, context) => {
+export const createHabit = region.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -88,7 +91,7 @@ export const createHabit = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const updateHabit = functions.https.onCall(async (data, context) => {
+export const updateHabit = region.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -141,7 +144,7 @@ export const updateHabit = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const deleteHabit = functions.https.onCall(async (data, context) => {
+export const deleteHabit = region.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -191,7 +194,7 @@ export const deleteHabit = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const completeHabit = functions.https.onCall(async (data, context) => {
+export const completeHabit = region.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -228,7 +231,6 @@ export const completeHabit = functions.https.onCall(async (data, context) => {
     const now = admin.firestore.Timestamp.now();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const todayTimestamp = admin.firestore.Timestamp.fromDate(today);
 
     // Log the completion
     await admin.firestore().collection("habitLogs").add({

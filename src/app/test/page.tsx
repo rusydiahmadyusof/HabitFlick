@@ -19,53 +19,17 @@ export default function TestPage() {
   });
 
   useEffect(() => {
-    checkStatus();
+    // Small delay to ensure component is mounted
+    const timer = setTimeout(() => {
+      checkStatus();
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   const checkStatus = () => {
-    // Check Firebase App
-    try {
-      const app = getFirebaseApp();
-      setStatus((prev) => ({
-        ...prev,
-        firebase: app ? "✅ Initialized" : "❌ Not initialized",
-      }));
-    } catch (err: any) {
-      setStatus((prev) => ({
-        ...prev,
-        firebase: `❌ Error: ${err.message}`,
-      }));
-    }
+    console.log("Checking Firebase status...");
 
-    // Check Auth
-    try {
-      const auth = getFirebaseAuth();
-      setStatus((prev) => ({
-        ...prev,
-        auth: auth ? "✅ Initialized" : "❌ Not initialized",
-      }));
-    } catch (err: any) {
-      setStatus((prev) => ({
-        ...prev,
-        auth: `❌ Error: ${err.message}`,
-      }));
-    }
-
-    // Check Functions
-    try {
-      const functions = getFirebaseFunctions();
-      setStatus((prev) => ({
-        ...prev,
-        functions: functions ? "✅ Initialized" : "❌ Not initialized",
-      }));
-    } catch (err: any) {
-      setStatus((prev) => ({
-        ...prev,
-        functions: `❌ Error: ${err.message}`,
-      }));
-    }
-
-    // Check Environment Variables
+    // Check Environment Variables first
     const envVars = [
       "NEXT_PUBLIC_FIREBASE_API_KEY",
       "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN",
@@ -79,6 +43,57 @@ export default function TestPage() {
           ? "✅ All configured"
           : `❌ Missing: ${missing.join(", ")}`,
     }));
+
+    // Check Firebase App
+    try {
+      console.log("Checking Firebase App...");
+      const app = getFirebaseApp();
+      console.log("Firebase App:", app);
+      setStatus((prev) => ({
+        ...prev,
+        firebase: app ? "✅ Initialized" : "❌ Not initialized",
+      }));
+    } catch (err: any) {
+      console.error("Firebase App Error:", err);
+      setStatus((prev) => ({
+        ...prev,
+        firebase: `❌ Error: ${err.message}`,
+      }));
+    }
+
+    // Check Auth
+    try {
+      console.log("Checking Firebase Auth...");
+      const auth = getFirebaseAuth();
+      console.log("Firebase Auth:", auth);
+      setStatus((prev) => ({
+        ...prev,
+        auth: auth ? "✅ Initialized" : "❌ Not initialized",
+      }));
+    } catch (err: any) {
+      console.error("Firebase Auth Error:", err);
+      setStatus((prev) => ({
+        ...prev,
+        auth: `❌ Error: ${err.message}`,
+      }));
+    }
+
+    // Check Functions
+    try {
+      console.log("Checking Firebase Functions...");
+      const functions = getFirebaseFunctions();
+      console.log("Firebase Functions:", functions);
+      setStatus((prev) => ({
+        ...prev,
+        functions: functions ? "✅ Initialized" : "❌ Not initialized",
+      }));
+    } catch (err: any) {
+      console.error("Firebase Functions Error:", err);
+      setStatus((prev) => ({
+        ...prev,
+        functions: `❌ Error: ${err.message}`,
+      }));
+    }
   };
 
   return (
@@ -130,6 +145,26 @@ export default function TestPage() {
             </div>
           </div>
         </Card>
+
+        {status.env.includes("❌") && (
+          <Card className="p-6 bg-yellow-50 border-yellow-200">
+            <h2 className="text-xl font-semibold mb-4 text-yellow-800">
+              ⚠️ Setup Required
+            </h2>
+            <div className="space-y-2 text-sm text-yellow-700">
+              <p className="font-semibold">To fix this, create a <code className="bg-yellow-100 px-1 rounded">.env.local</code> file in the project root with:</p>
+              <pre className="bg-yellow-100 p-3 rounded overflow-x-auto text-xs">
+{`NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id`}
+              </pre>
+              <p className="mt-2">Get these values from your Firebase Console → Project Settings → General → Your apps</p>
+            </div>
+          </Card>
+        )}
 
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-4">Quick Links</h2>

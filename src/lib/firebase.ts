@@ -22,9 +22,20 @@ function getFirebaseApp(): FirebaseApp {
     throw new Error("Firebase can only be initialized in the browser");
   }
 
+  // Check if config is valid
+  if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+    throw new Error(
+      "Firebase configuration is missing. Please check your .env.local file."
+    );
+  }
+
   if (!app) {
     if (!getApps().length) {
-      app = initializeApp(firebaseConfig);
+      try {
+        app = initializeApp(firebaseConfig);
+      } catch (error: any) {
+        throw new Error(`Failed to initialize Firebase: ${error.message}`);
+      }
     } else {
       app = getApps()[0];
     }
@@ -51,7 +62,8 @@ function getFirestoreDb(): Firestore {
 function getFirebaseFunctions(): Functions {
   if (!functions) {
     const firebaseApp = getFirebaseApp();
-    functions = getFunctions(firebaseApp);
+    // Explicitly set region to match backend (us-central1)
+    functions = getFunctions(firebaseApp, "us-central1");
   }
   return functions;
 }
@@ -61,11 +73,6 @@ if (typeof window !== "undefined") {
   getFirebaseApp();
 }
 
-// Export getters
+// Export getters only (true lazy initialization)
 export { getFirebaseApp, getFirebaseAuth, getFirestoreDb, getFirebaseFunctions };
-
-// Export initialized instances (lazy initialization)
-export const auth = typeof window !== "undefined" ? getFirebaseAuth() : null;
-export const db = typeof window !== "undefined" ? getFirestoreDb() : null;
-export const functions = typeof window !== "undefined" ? getFirebaseFunctions() : null;
 

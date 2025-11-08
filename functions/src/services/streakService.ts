@@ -91,8 +91,8 @@ export async function calculateStreak(
   let tempStreak = 1;
 
   for (let i = 0; i < uniqueDates.length - 1; i++) {
-    const currentDate = new Date(uniqueDates[i]);
-    const nextDate = new Date(uniqueDates[i + 1]);
+    const currentDate = new Date(uniqueDates[i] as number);
+    const nextDate = new Date(uniqueDates[i + 1] as number);
     const daysDiff = Math.floor(
       (currentDate.getTime() - nextDate.getTime()) / (1000 * 60 * 60 * 24)
     );

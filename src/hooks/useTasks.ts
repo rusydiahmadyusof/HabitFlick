@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { taskAPI } from "@/lib/api";
+import { firestoreTaskAPI } from "@/lib/firestoreApi";
 import { useTaskStore } from "@/store/taskStore";
 import type { Task, TaskStatus } from "@/types";
 
@@ -16,14 +16,7 @@ export function useTasks(status?: TaskStatus) {
     setLoading(true);
     setError(null);
     try {
-      const result = await taskAPI.getTasks({ status, limit: 100 });
-      const fetchedTasks = result.data.tasks.map((task) => ({
-        ...task,
-        createdAt: task.createdAt ? new Date(task.createdAt as any) : new Date(),
-        updatedAt: task.updatedAt ? new Date(task.updatedAt as any) : new Date(),
-        dueDate: task.dueDate ? new Date(task.dueDate as any) : undefined,
-        completedAt: task.completedAt ? new Date(task.completedAt as any) : undefined,
-      })) as Task[];
+      const fetchedTasks = await firestoreTaskAPI.getTasks(status, 100);
       setTasks(fetchedTasks);
     } catch (err: any) {
       setError(err.message || "Failed to load tasks");
@@ -43,16 +36,7 @@ export function useTasks(status?: TaskStatus) {
     setLoading(true);
     setError(null);
     try {
-      const result = await taskAPI.createTask({
-        ...taskData,
-        dueDate: taskData.dueDate?.toISOString(),
-      });
-      const newTask = {
-        ...result.data,
-        createdAt: new Date(result.data.createdAt as any),
-        updatedAt: new Date(result.data.updatedAt as any),
-        dueDate: result.data.dueDate ? new Date(result.data.dueDate as any) : undefined,
-      } as Task;
+      const newTask = await firestoreTaskAPI.createTask(taskData);
       addTask(newTask);
       return newTask;
     } catch (err: any) {
@@ -67,20 +51,7 @@ export function useTasks(status?: TaskStatus) {
     setLoading(true);
     setError(null);
     try {
-      const result = await taskAPI.updateTask({
-        taskId,
-        updates: {
-          ...updates,
-          dueDate: updates.dueDate instanceof Date ? updates.dueDate.toISOString() : updates.dueDate,
-        },
-      });
-      const updatedTask = {
-        ...result.data,
-        createdAt: new Date(result.data.createdAt as any),
-        updatedAt: new Date(result.data.updatedAt as any),
-        dueDate: result.data.dueDate ? new Date(result.data.dueDate as any) : undefined,
-        completedAt: result.data.completedAt ? new Date(result.data.completedAt as any) : undefined,
-      } as Task;
+      const updatedTask = await firestoreTaskAPI.updateTask(taskId, updates);
       updateTask(taskId, updatedTask);
       return updatedTask;
     } catch (err: any) {
@@ -95,7 +66,7 @@ export function useTasks(status?: TaskStatus) {
     setLoading(true);
     setError(null);
     try {
-      await taskAPI.deleteTask({ taskId });
+      await firestoreTaskAPI.deleteTask(taskId);
       removeTask(taskId);
     } catch (err: any) {
       setError(err.message || "Failed to delete task");
@@ -109,14 +80,7 @@ export function useTasks(status?: TaskStatus) {
     setLoading(true);
     setError(null);
     try {
-      const result = await taskAPI.completeTask({ taskId });
-      const completedTask = {
-        ...result.data,
-        createdAt: new Date(result.data.createdAt as any),
-        updatedAt: new Date(result.data.updatedAt as any),
-        completedAt: new Date(result.data.completedAt as any),
-        dueDate: result.data.dueDate ? new Date(result.data.dueDate as any) : undefined,
-      } as Task;
+      const completedTask = await firestoreTaskAPI.completeTask(taskId);
       updateTask(taskId, completedTask);
       return completedTask;
     } catch (err: any) {

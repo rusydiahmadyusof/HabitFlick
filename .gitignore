@@ -46,3 +46,5 @@ ui-debug.log
 *.swo
 *~
 env.example
+QUICK_TEST.md
+masterprompt.md

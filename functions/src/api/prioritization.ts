@@ -6,7 +6,10 @@ import {
   analyzeUserPatterns,
 } from "../services/prioritizationService";
 
-export const prioritizeTasks = functions.https.onCall(async (data, context) => {
+// Use us-central1 region explicitly
+const region = functions.region("us-central1");
+
+export const prioritizeTasks = region.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -51,7 +54,7 @@ export const prioritizeTasks = functions.https.onCall(async (data, context) => {
   }
 });
 
-export const getSuggestedOrder = functions.https.onCall(async (data, context) => {
+export const getSuggestedOrder = region.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -83,7 +86,7 @@ export const getSuggestedOrder = functions.https.onCall(async (data, context) =>
   }
 });
 
-export const getUserInsights = functions.https.onCall(async (data, context) => {
+export const getUserInsights = region.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",

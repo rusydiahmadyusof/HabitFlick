@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { prioritizationAPI } from "@/lib/api";
+import { firestorePrioritizationAPI } from "@/lib/firestoreApi";
 import type { Task } from "@/types";
 
 export function usePrioritization() {
@@ -10,14 +10,7 @@ export function usePrioritization() {
     setLoading(true);
     setError(null);
     try {
-      const result = await prioritizationAPI.prioritizeTasks({ taskIds });
-      const tasks = result.data.tasks.map((task) => ({
-        ...task,
-        createdAt: task.createdAt ? new Date(task.createdAt as any) : new Date(),
-        updatedAt: task.updatedAt ? new Date(task.updatedAt as any) : new Date(),
-        dueDate: task.dueDate ? new Date(task.dueDate as any) : undefined,
-        completedAt: task.completedAt ? new Date(task.completedAt as any) : undefined,
-      })) as Task[];
+      const tasks = await firestorePrioritizationAPI.prioritizeTasks(taskIds);
       return tasks;
     } catch (err: any) {
       setError(err.message || "Failed to prioritize tasks");
@@ -31,21 +24,8 @@ export function usePrioritization() {
     setLoading(true);
     setError(null);
     try {
-      const result = await prioritizationAPI.getSuggestedOrder({});
-      const formatTasks = (tasks: any[]) =>
-        tasks.map((task) => ({
-          ...task,
-          createdAt: task.createdAt ? new Date(task.createdAt as any) : new Date(),
-          updatedAt: task.updatedAt ? new Date(task.updatedAt as any) : new Date(),
-          dueDate: task.dueDate ? new Date(task.dueDate as any) : undefined,
-          completedAt: task.completedAt ? new Date(task.completedAt as any) : undefined,
-        })) as Task[];
-
-      return {
-        morning: formatTasks(result.data.morning),
-        afternoon: formatTasks(result.data.afternoon),
-        evening: formatTasks(result.data.evening),
-      };
+      const result = await firestorePrioritizationAPI.getSuggestedOrder();
+      return result;
     } catch (err: any) {
       setError(err.message || "Failed to get suggested order");
       throw err;
@@ -58,8 +38,8 @@ export function usePrioritization() {
     setLoading(true);
     setError(null);
     try {
-      const result = await prioritizationAPI.getUserInsights({});
-      return result.data;
+      const insights = await firestorePrioritizationAPI.getUserInsights();
+      return insights;
     } catch (err: any) {
       setError(err.message || "Failed to get user insights");
       throw err;
