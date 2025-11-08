@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import StreakDisplay from "@/components/features/StreakDisplay";
 import type { Habit } from "@/types";
 import { formatDate } from "@/lib/utils";
 
@@ -72,26 +73,19 @@ export default function HabitCard({
           </span>
         </div>
 
-        <div className="flex items-center gap-6 mb-4">
-          <div>
-            <p className="text-sm text-gray-500">Current Streak</p>
-            <p className="text-2xl font-bold text-blue-600">{habit.streak}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Longest Streak</p>
-            <p className="text-2xl font-bold text-gray-700">
-              {habit.longestStreak}
+        <div className="mb-4">
+          <StreakDisplay
+            currentStreak={habit.streak}
+            longestStreak={habit.longestStreak}
+          />
+        </div>
+        {habit.lastCompleted && (
+          <div className="mb-3">
+            <p className="text-sm text-gray-500">
+              Last completed: {formatDate(habit.lastCompleted)}
             </p>
           </div>
-          {habit.lastCompleted && (
-            <div>
-              <p className="text-sm text-gray-500">Last Completed</p>
-              <p className="text-sm font-medium">
-                {formatDate(habit.lastCompleted)}
-              </p>
-            </div>
-          )}
-        </div>
+        )}
 
         {habit.frequency === "custom" && habit.customSchedule && (
           <div className="mb-3">
