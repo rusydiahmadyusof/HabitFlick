@@ -52,7 +52,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 
 ```
 habitflick/
-├── frontend/          # Next.js app
+├── src/              # Next.js app source
 │   ├── app/          # App Router pages
 │   ├── components/   # React components
 │   ├── lib/          # Utilities and configs

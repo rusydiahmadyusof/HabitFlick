@@ -2,8 +2,16 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  experimental: {
-    appDir: true,
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  // Exclude functions directory from webpack
+  webpack: (config) => {
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: ["**/functions/**"],
+    };
+    return config;
   },
 };
 
