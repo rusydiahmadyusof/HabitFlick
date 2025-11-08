@@ -76,8 +76,8 @@ export async function recordDailyAnalytics(): Promise<Analytics> {
   });
 
   // Calculate productivity score (0-100)
-  const totalTasks = (allTasks || []).filter((t) => t.status !== "archived").length;
-  const completedTasks = (allTasks || []).filter((t) => t.status === "completed").length;
+  const totalTasks = (allTasks || []).filter((t: any) => t.status !== "archived").length;
+  const completedTasks = (allTasks || []).filter((t: any) => t.status === "completed").length;
   const taskCompletionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
   const totalHabits = (allHabits || []).length;

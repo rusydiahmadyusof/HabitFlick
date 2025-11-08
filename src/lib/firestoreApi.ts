@@ -131,13 +131,18 @@ export const firestoreTaskAPI = {
     await updateDoc(taskRef, updateData);
     const updatedDoc = await getDoc(taskRef);
 
+    const data = updatedDoc.data();
+    if (!data) {
+      throw new Error("Task data not found");
+    }
+    
     return {
       id: updatedDoc.id,
-      ...updatedDoc.data(),
-      createdAt: timestampToDate(updatedDoc.data().createdAt) || new Date(),
+      ...data,
+      createdAt: timestampToDate(data.createdAt) || new Date(),
       updatedAt: new Date(),
-      dueDate: timestampToDate(updatedDoc.data().dueDate),
-      completedAt: timestampToDate(updatedDoc.data().completedAt),
+      dueDate: timestampToDate(data.dueDate),
+      completedAt: timestampToDate(data.completedAt),
     } as Task;
   },
 
@@ -227,13 +232,24 @@ export const firestoreHabitAPI = {
     const docRef = await addDoc(collection(db, "habits"), habitDoc);
     const docSnap = await getDoc(docRef);
 
+    const createdHabitData = docSnap.data();
+    if (!createdHabitData) {
+      throw new Error("Habit data not found");
+    }
+    
     const newHabit = {
       id: docRef.id,
-      ...docSnap.data(),
+      userId: createdHabitData.userId as string,
+      title: createdHabitData.title as string,
+      description: (createdHabitData.description || "") as string,
+      frequency: createdHabitData.frequency as "daily" | "weekly" | "custom",
+      customSchedule: createdHabitData.customSchedule,
       createdAt: new Date(),
       currentStreak: 0,
       longestStreak: 0,
-      streak: 0, // Also set streak for compatibility
+      streak: 0,
+      archived: (createdHabitData.archived || false) as boolean,
+      lastCompleted: createdHabitData.lastCompleted ? timestampToDate(createdHabitData.lastCompleted) : undefined,
     } as Habit;
     
     // Check for badges (async, don't wait)
@@ -266,12 +282,24 @@ export const firestoreHabitAPI = {
 
     await updateDoc(habitRef, updateData);
     const updatedDoc = await getDoc(habitRef);
+    const updatedHabitData = updatedDoc.data();
+    
+    if (!updatedHabitData) {
+      throw new Error("Habit data not found");
+    }
 
     return {
       id: updatedDoc.id,
-      ...updatedDoc.data(),
-      createdAt: timestampToDate(updatedDoc.data().createdAt) || new Date(),
-      lastCompleted: timestampToDate(updatedDoc.data().lastCompleted),
+      userId: updatedHabitData.userId as string,
+      title: updatedHabitData.title as string,
+      description: (updatedHabitData.description || "") as string,
+      frequency: updatedHabitData.frequency as "daily" | "weekly" | "custom",
+      customSchedule: updatedHabitData.customSchedule,
+      createdAt: timestampToDate(updatedHabitData.createdAt) || new Date(),
+      lastCompleted: timestampToDate(updatedHabitData.lastCompleted),
+      streak: (updatedHabitData.streak || updatedHabitData.currentStreak || 0) as number,
+      longestStreak: (updatedHabitData.longestStreak || 0) as number,
+      archived: (updatedHabitData.archived || false) as boolean,
     } as Habit;
   },
 
@@ -305,8 +333,8 @@ export const firestoreHabitAPI = {
       throw new Error("Habit not found");
     }
 
-    const habitData = habitDoc.data();
-    if (habitData.userId !== userId) {
+    const existingHabitData = habitDoc.data();
+    if (!existingHabitData || existingHabitData.userId !== userId) {
       throw new Error("Not authorized to complete this habit");
     }
 
@@ -319,12 +347,12 @@ export const firestoreHabitAPI = {
     });
 
     // Calculate streak
-    const lastCompleted = timestampToDate(habitData.lastCompleted);
+    const lastCompleted = timestampToDate(existingHabitData.lastCompleted);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    let currentStreak = habitData.currentStreak || 0;
-    let longestStreak = habitData.longestStreak || 0;
+    let currentStreak = (existingHabitData.currentStreak || 0) as number;
+    let longestStreak = (existingHabitData.longestStreak || 0) as number;
 
     if (lastCompleted) {
       const lastDate = new Date(lastCompleted);
@@ -355,14 +383,24 @@ export const firestoreHabitAPI = {
     });
 
     const updatedDoc = await getDoc(habitRef);
+    const completedHabitData = updatedDoc.data();
+    if (!completedHabitData) {
+      throw new Error("Habit data not found");
+    }
+    
     const updatedHabit = {
       id: updatedDoc.id,
-      ...updatedDoc.data(),
-      createdAt: timestampToDate(updatedDoc.data().createdAt) || new Date(),
+      userId: completedHabitData.userId as string,
+      title: completedHabitData.title as string,
+      description: (completedHabitData.description || "") as string,
+      frequency: completedHabitData.frequency as "daily" | "weekly" | "custom",
+      customSchedule: completedHabitData.customSchedule,
+      createdAt: timestampToDate(completedHabitData.createdAt) || new Date(),
       lastCompleted: today,
       currentStreak,
       longestStreak,
-      streak: currentStreak, // Also set streak for compatibility
+      streak: currentStreak,
+      archived: (completedHabitData.archived || false) as boolean,
     } as Habit;
     
     // Check for badges (async, don't wait)

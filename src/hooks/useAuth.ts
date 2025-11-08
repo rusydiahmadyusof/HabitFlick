@@ -27,6 +27,18 @@ export function useAuth() {
               email: firebaseUser.email || "",
               displayName: firebaseUser.displayName || "",
               premium: false,
+              createdAt: new Date(),
+              leaderboardOptIn: false,
+              preferences: {
+                theme: "light" as const,
+                notifications: true,
+                defaultView: "dashboard" as const,
+              },
+              stats: {
+                totalTasksCompleted: 0,
+                totalHabitsCompleted: 0,
+                currentStreak: 0,
+              },
             }
           : null
       );

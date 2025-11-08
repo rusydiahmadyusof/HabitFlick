@@ -51,7 +51,7 @@ export default function NavigationBar() {
             {user && (
               <div className="ml-4 flex items-center gap-2">
                 <span className="text-sm text-gray-600">{user.email}</span>
-                <Button variant="outline" size="sm" onClick={handleLogout}>
+                <Button variant="secondary" size="sm" onClick={handleLogout}>
                   Logout
                 </Button>
               </div>

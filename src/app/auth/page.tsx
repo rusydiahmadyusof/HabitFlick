@@ -125,7 +125,7 @@ export default function AuthPage() {
 
           <Button
             type="button"
-            variant="outline"
+            variant="secondary"
             className="w-full mt-4"
             onClick={handleGoogleSignIn}
             disabled={loading}
