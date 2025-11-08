@@ -1,16 +1,29 @@
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { auth } from "./firebase";
+import { httpsCallable } from "firebase/functions";
+import { getFirebaseFunctions } from "./firebase";
 import type { Task, Habit } from "@/types";
 
-const functions = getFunctions();
+// Lazy initialization - get functions when needed
+function getFunctions() {
+  if (typeof window === "undefined") {
+    throw new Error("Firebase Functions can only be used in the browser");
+  }
+  return getFirebaseFunctions();
+}
+
+// Helper to create callable functions lazily
+function createCallable<TRequest, TResponse>(
+  name: string
+): (data: TRequest) => Promise<{ data: TResponse }> {
+  return (data: TRequest) => {
+    const callable = httpsCallable<TRequest, TResponse>(getFunctions(), name);
+    return callable(data);
+  };
+}
 
 // Task API
 export const taskAPI = {
-  getTasks: httpsCallable<{ status?: string; limit?: number }, { tasks: Task[] }>(
-    functions,
-    "getTasks"
-  ),
-  createTask: httpsCallable<
+  getTasks: createCallable<{ status?: string; limit?: number }, { tasks: Task[] }>("getTasks"),
+  createTask: createCallable<
     {
       title: string;
       description?: string;
@@ -19,28 +32,19 @@ export const taskAPI = {
       tags?: string[];
     },
     Task
-  >(functions, "createTask"),
-  updateTask: httpsCallable<
+  >("createTask"),
+  updateTask: createCallable<
     { taskId: string; updates: Partial<Task> },
     Task
-  >(functions, "updateTask"),
-  deleteTask: httpsCallable<{ taskId: string }, { success: boolean }>(
-    functions,
-    "deleteTask"
-  ),
-  completeTask: httpsCallable<{ taskId: string }, Task>(
-    functions,
-    "completeTask"
-  ),
+  >("updateTask"),
+  deleteTask: createCallable<{ taskId: string }, { success: boolean }>("deleteTask"),
+  completeTask: createCallable<{ taskId: string }, Task>("completeTask"),
 };
 
 // Habit API
 export const habitAPI = {
-  getHabits: httpsCallable<{}, { habits: Habit[] }>(
-    functions,
-    "getHabits"
-  ),
-  createHabit: httpsCallable<
+  getHabits: createCallable<{}, { habits: Habit[] }>("getHabits"),
+  createHabit: createCallable<
     {
       title: string;
       description?: string;
@@ -51,32 +55,29 @@ export const habitAPI = {
       };
     },
     Habit
-  >(functions, "createHabit"),
-  updateHabit: httpsCallable<
+  >("createHabit"),
+  updateHabit: createCallable<
     { habitId: string; updates: Partial<Habit> },
     Habit
-  >(functions, "updateHabit"),
-  deleteHabit: httpsCallable<{ habitId: string }, { success: boolean }>(
-    functions,
-    "deleteHabit"
-  ),
-  completeHabit: httpsCallable<
+  >("updateHabit"),
+  deleteHabit: createCallable<{ habitId: string }, { success: boolean }>("deleteHabit"),
+  completeHabit: createCallable<
     { habitId: string; notes?: string },
     Habit
-  >(functions, "completeHabit"),
+  >("completeHabit"),
 };
 
 // Prioritization API
 export const prioritizationAPI = {
-  prioritizeTasks: httpsCallable<
+  prioritizeTasks: createCallable<
     { taskIds?: string[] },
     { tasks: Task[] }
-  >(functions, "prioritizeTasks"),
-  getSuggestedOrder: httpsCallable<
+  >("prioritizeTasks"),
+  getSuggestedOrder: createCallable<
     {},
     { morning: Task[]; afternoon: Task[]; evening: Task[] }
-  >(functions, "getSuggestedOrder"),
-  getUserInsights: httpsCallable<
+  >("getSuggestedOrder"),
+  getUserInsights: createCallable<
     {},
     {
       bestCompletionTime: string;
@@ -84,6 +85,6 @@ export const prioritizationAPI = {
       mostProductiveDay: string;
       suggestions: string[];
     }
-  >(functions, "getUserInsights"),
+  >("getUserInsights"),
 };
 
