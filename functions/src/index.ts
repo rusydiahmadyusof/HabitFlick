@@ -1,10 +1,15 @@
 import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
 
-// Export API functions
-// Will be added in subsequent phases
+// Initialize Firebase Admin
+admin.initializeApp();
 
-export const helloWorld = functions.https.onRequest((request, response) => {
-  functions.logger.info("Hello logs!", { structuredData: true });
-  response.json({ message: "Hello from Firebase!" });
-});
+// Export Task API functions
+export {
+  getTasks,
+  createTask,
+  updateTask,
+  deleteTask,
+  completeTask,
+} from "./api/tasks";
 
