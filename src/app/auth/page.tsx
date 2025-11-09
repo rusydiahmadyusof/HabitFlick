@@ -42,6 +42,8 @@ export default function AuthPage() {
       }
       router.push("/");
     } catch (err) {
+      // Log full error for debugging
+      console.error("Authentication error:", err);
       setError(formatErrorForUser(err));
     } finally {
       setLoading(false);
@@ -55,6 +57,8 @@ export default function AuthPage() {
       await signInWithGoogle();
       router.push("/");
     } catch (err) {
+      // Log full error for debugging
+      console.error("Google sign-in error:", err);
       setError(formatErrorForUser(err));
     } finally {
       setLoading(false);

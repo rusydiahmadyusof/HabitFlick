@@ -80,11 +80,31 @@ export function formatErrorForUser(error: unknown): string {
       case "auth/email-already-in-use":
         return "This email is already registered";
       case "auth/weak-password":
-        return "Password is too weak";
+        return "Password is too weak (minimum 6 characters)";
       case "auth/invalid-email":
         return "Invalid email address";
+      case "auth/unauthorized-domain":
+        return "This domain is not authorized. Please contact support or check Firebase configuration.";
+      case "auth/operation-not-allowed":
+        return "This sign-in method is not enabled. Please contact support.";
+      case "auth/network-request-failed":
+        return "Network error. Please check your connection and try again.";
+      case "auth/invalid-api-key":
+        return "Invalid API key. Please check Firebase configuration.";
+      case "auth/app-not-authorized":
+        return "App not authorized. Please check Firebase configuration.";
+      case "auth/too-many-requests":
+        return "Too many requests. Please try again later.";
+      case "auth/popup-closed-by-user":
+        return "Sign-in popup was closed. Please try again.";
+      case "auth/cancelled-popup-request":
+        return "Sign-in was cancelled. Please try again.";
       default:
-        return "Authentication failed. Please try again.";
+        // Log the actual error code for debugging
+        if (code) {
+          console.error("Unhandled auth error code:", code, error);
+        }
+        return `Authentication failed. ${code ? `Error: ${code}` : "Please try again."}`;
     }
   }
 
