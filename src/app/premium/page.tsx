@@ -24,7 +24,7 @@ export default function PremiumPage() {
                 Everything is Free
               </h2>
               <p className="text-lg text-gray-600 mb-6">
-                We've removed all limitations. Enjoy unlimited access to all features!
+                We&apos;ve removed all limitations. Enjoy unlimited access to all features!
               </p>
               
               <div className="grid md:grid-cols-2 gap-6 mt-8 text-left">

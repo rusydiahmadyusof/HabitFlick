@@ -5,6 +5,8 @@ import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import { getFirestoreDb } from "@/lib/firebase";
 import Card from "@/components/ui/Card";
 import { useBadges } from "@/hooks/useBadges";
+import { calculateLevel } from "@/lib/gamificationService";
+import { getBadgeDefinition } from "@/lib/badges";
 
 interface LeaderboardUser {
   userId: string;
@@ -23,6 +25,7 @@ export default function LeaderboardPage() {
 
   useEffect(() => {
     loadLeaderboard();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeframe]);
 
   const loadLeaderboard = async () => {
@@ -57,13 +60,19 @@ export default function LeaderboardPage() {
         }
         
         const user = userMap.get(userId)!;
-        // Calculate points from badge (simplified - would need badge definitions)
-        user.totalPoints += 5; // Base points per badge
+        // Calculate actual points from badge definition
+        try {
+          const definition = getBadgeDefinition(badge.badgeType);
+          user.totalPoints += definition.points;
+        } catch {
+          // Fallback to 5 points if badge type not found
+          user.totalPoints += 5;
+        }
       });
 
-      // Calculate levels
+      // Calculate levels for each user based on their points
       userMap.forEach((user) => {
-        const levelInfo = getLevelInfo();
+        const levelInfo = calculateLevel(user.totalPoints);
         user.level = levelInfo.level;
       });
 

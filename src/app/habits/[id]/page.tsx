@@ -28,6 +28,7 @@ export default function HabitDetailPage() {
 
   useEffect(() => {
     loadHabit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [habitId]);
 
   const loadHabit = async () => {
