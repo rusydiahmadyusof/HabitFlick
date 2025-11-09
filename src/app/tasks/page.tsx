@@ -62,19 +62,19 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Tasks</h1>
-        <Button onClick={() => setShowAddForm(!showAddForm)}>
+    <div className="container mx-auto px-4 py-6 sm:py-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-50">Tasks</h1>
+        <Button onClick={() => setShowAddForm(!showAddForm)} className="w-full sm:w-auto">
           {showAddForm ? "Cancel" : "Add Task"}
         </Button>
       </div>
 
       {showAddForm && (
-        <Card className="mb-6 p-6">
+        <Card className="mb-6 p-4 sm:p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Title *
               </label>
               <Input
@@ -87,7 +87,7 @@ export default function TasksPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Description
               </label>
               <textarea
@@ -100,9 +100,9 @@ export default function TasksPage() {
                 placeholder="Enter task description"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Priority
                 </label>
                 <select
@@ -121,7 +121,7 @@ export default function TasksPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Due Date
                 </label>
                 <Input
@@ -143,7 +143,7 @@ export default function TasksPage() {
       <div className="space-y-6">
         {pendingTasks.length > 0 && (
           <section>
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
               Pending ({pendingTasks.length})
             </h2>
             <div className="space-y-3">
@@ -161,7 +161,7 @@ export default function TasksPage() {
 
         {inProgressTasks.length > 0 && (
           <section>
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
               In Progress ({inProgressTasks.length})
             </h2>
             <div className="space-y-3">
@@ -179,7 +179,7 @@ export default function TasksPage() {
 
         {completedTasks.length > 0 && (
           <section>
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
               Completed ({completedTasks.length})
             </h2>
             <div className="space-y-3">
@@ -196,8 +196,8 @@ export default function TasksPage() {
         )}
 
         {tasks.length === 0 && (
-          <Card className="p-8 text-center">
-            <p className="text-gray-500">No tasks yet. Create your first task!</p>
+          <Card className="p-6 sm:p-8 text-center">
+            <p className="text-gray-500 dark:text-gray-400">No tasks yet. Create your first task!</p>
           </Card>
         )}
       </div>

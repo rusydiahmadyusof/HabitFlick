@@ -47,24 +47,24 @@ export default function BadgesPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <p>Loading badges...</p>
+      <div className="container mx-auto px-4 py-6 sm:py-8">
+        <p className="text-gray-600 dark:text-gray-400">Loading badges...</p>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-6 sm:py-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Your Achievements</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-900 dark:text-gray-50">Your Achievements</h1>
 
         {/* Level and Points */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Your Level</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8">
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-900 dark:text-gray-50">Your Level</h2>
             <div className="text-center">
-              <div className="text-6xl font-bold text-blue-600 mb-2">Level {level}</div>
-              <p className="text-gray-600 mb-4">{totalPoints} total points</p>
+              <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-blue-600 dark:text-blue-400 mb-2">Level {level}</div>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">{totalPoints} total points</p>
               <div className="w-full bg-gray-200 rounded-full h-4 mb-2">
                 <div
                   className="bg-blue-600 h-4 rounded-full transition-all"
@@ -79,35 +79,35 @@ export default function BadgesPage() {
             </div>
           </Card>
 
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Progress</h2>
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-900 dark:text-gray-50">Progress</h2>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Badges Earned</span>
-                <span className="font-semibold">
+                <span className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Badges Earned</span>
+                <span className="font-semibold text-sm sm:text-base">
                   {badges.length} / {allBadges.length}
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div
-                  className="bg-purple-600 h-2 rounded-full"
+                  className="bg-purple-600 dark:bg-purple-500 h-2 rounded-full"
                   style={{
                     width: `${(badges.length / allBadges.length) * 100}%`,
                   }}
                 ></div>
               </div>
               <div className="flex justify-between items-center mt-4">
-                <span className="text-gray-600">Total Points</span>
-                <span className="font-semibold text-blue-600">{totalPoints}</span>
+                <span className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Total Points</span>
+                <span className="font-semibold text-blue-600 dark:text-blue-400 text-sm sm:text-base">{totalPoints}</span>
               </div>
             </div>
           </Card>
         </div>
 
         {/* Earned Badges */}
-        <Card className="p-6 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Earned Badges ({badges.length})</h2>
+        <Card className="p-4 sm:p-6 mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-50">Earned Badges ({badges.length})</h2>
             <ShareButton
               title="Check out my HabitFlick achievements!"
               text={`I've earned ${badges.length} badges and reached Level ${level} with ${totalPoints} points! 🏆`}
@@ -119,8 +119,8 @@ export default function BadgesPage() {
         </Card>
 
         {/* All Available Badges */}
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">
+        <Card className="p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-900 dark:text-gray-50">
             All Badges ({allBadges.length})
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -85,19 +85,19 @@ export default function HabitsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Habits</h1>
-        <Button onClick={() => setShowAddForm(!showAddForm)}>
+    <div className="container mx-auto px-4 py-6 sm:py-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-50">Habits</h1>
+        <Button onClick={() => setShowAddForm(!showAddForm)} className="w-full sm:w-auto">
           {showAddForm ? "Cancel" : "Add Habit"}
         </Button>
       </div>
 
       {showAddForm && (
-        <Card className="mb-6 p-6">
+        <Card className="mb-6 p-4 sm:p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Title *
               </label>
               <Input
@@ -110,7 +110,7 @@ export default function HabitsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Description
               </label>
               <textarea
@@ -124,7 +124,7 @@ export default function HabitsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Frequency *
               </label>
               <select
@@ -144,7 +144,7 @@ export default function HabitsPage() {
             </div>
             {formData.frequency === "custom" && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Select Days
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -191,8 +191,8 @@ export default function HabitsPage() {
         ))}
 
         {habits.length === 0 && (
-          <Card className="p-8 text-center">
-            <p className="text-gray-500">No habits yet. Create your first habit!</p>
+          <Card className="p-6 sm:p-8 text-center">
+            <p className="text-gray-500 dark:text-gray-400">No habits yet. Create your first habit!</p>
           </Card>
         )}
       </div>

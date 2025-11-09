@@ -91,47 +91,47 @@ export default function LeaderboardPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6 sm:py-8">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Loading leaderboard...</p>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading leaderboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-6 sm:py-8">
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Leaderboard</h1>
-          <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-50">Leaderboard</h1>
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             <button
               onClick={() => setTimeframe("all")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${
+              className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                 timeframe === "all"
-                  ? "bg-blue-100 text-blue-700"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                  : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
             >
               All Time
             </button>
             <button
               onClick={() => setTimeframe("week")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${
+              className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                 timeframe === "week"
-                  ? "bg-blue-100 text-blue-700"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                  : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
             >
               This Week
             </button>
             <button
               onClick={() => setTimeframe("month")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${
+              className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                 timeframe === "month"
-                  ? "bg-blue-100 text-blue-700"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                  : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
             >
               This Month
@@ -141,7 +141,7 @@ export default function LeaderboardPage() {
 
         {users.length === 0 ? (
           <Card className="p-6 text-center">
-            <p className="text-gray-600">No leaderboard data yet. Be the first to earn points!</p>
+            <p className="text-gray-600 dark:text-gray-400">No leaderboard data yet. Be the first to earn points!</p>
           </Card>
         ) : (
           <div className="space-y-3">
@@ -150,33 +150,35 @@ export default function LeaderboardPage() {
                 key={user.userId}
                 className={`p-4 ${
                   index === 0
-                    ? "bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200"
+                    ? "bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-yellow-200 dark:border-yellow-800"
                     : index < 3
-                    ? "bg-gradient-to-r from-blue-50 to-purple-50"
+                    ? "bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20"
                     : ""
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-600">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                    <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center font-bold text-blue-600 dark:text-blue-400 text-sm sm:text-base">
                       {index + 1}
                     </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">{user.email}</p>
-                      <p className="text-sm text-gray-600">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-gray-900 dark:text-gray-100 truncate">{user.email}</p>
+                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                         Level {user.level} • {user.totalPoints} points
                       </p>
                     </div>
                   </div>
-                  {index === 0 && (
-                    <span className="text-2xl">👑</span>
-                  )}
-                  {index === 1 && (
-                    <span className="text-2xl">🥈</span>
-                  )}
-                  {index === 2 && (
-                    <span className="text-2xl">🥉</span>
-                  )}
+                  <div className="flex-shrink-0">
+                    {index === 0 && (
+                      <span className="text-xl sm:text-2xl">👑</span>
+                    )}
+                    {index === 1 && (
+                      <span className="text-xl sm:text-2xl">🥈</span>
+                    )}
+                    {index === 2 && (
+                      <span className="text-xl sm:text-2xl">🥉</span>
+                    )}
+                  </div>
                 </div>
               </Card>
             ))}

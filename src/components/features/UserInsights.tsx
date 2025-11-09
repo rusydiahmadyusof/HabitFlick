@@ -36,17 +36,17 @@ export default function UserInsights() {
 
   if (loading) {
     return (
-      <Card className="p-6">
-        <p>Loading insights...</p>
+      <Card className="p-4 sm:p-6">
+        <p className="text-gray-600 dark:text-gray-400">Loading insights...</p>
       </Card>
     );
   }
 
   if (error) {
     return (
-      <Card className="p-6">
-        <p className="text-red-600">Error: {error}</p>
-        <Button onClick={loadInsights} className="mt-4" size="sm">
+      <Card className="p-4 sm:p-6">
+        <p className="text-red-600 dark:text-red-400">Error: {error}</p>
+        <Button onClick={loadInsights} className="mt-4 w-full sm:w-auto" size="sm">
           Try Again
         </Button>
       </Card>
@@ -64,31 +64,31 @@ export default function UserInsights() {
   };
 
   return (
-    <Card variant="elevated" className="p-6 bg-gradient-to-br from-purple-50 to-blue-50">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">Your Insights</h3>
-        <Button onClick={loadInsights} size="sm" variant="ghost">
+    <Card variant="elevated" className="p-4 sm:p-6 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-50">Your Insights</h3>
+        <Button onClick={loadInsights} size="sm" variant="ghost" className="w-full sm:w-auto">
           Refresh
         </Button>
       </div>
 
       <div className="space-y-4">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="text-center">
-            <p className="text-sm text-gray-600 mb-1">Best Time</p>
-            <p className="font-semibold text-gray-900">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1">Best Time</p>
+            <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base">
               {timeLabels[insights.bestCompletionTime] || insights.bestCompletionTime}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-sm text-gray-600 mb-1">Avg Tasks/Day</p>
-            <p className="font-semibold text-gray-900">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1">Avg Tasks/Day</p>
+            <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base">
               {insights.averageTasksPerDay}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-sm text-gray-600 mb-1">Most Productive</p>
-            <p className="font-semibold text-gray-900">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1">Most Productive</p>
+            <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base">
               {insights.mostProductiveDay}
             </p>
           </div>
@@ -96,13 +96,13 @@ export default function UserInsights() {
 
         {insights.suggestions.length > 0 && (
           <div>
-            <h4 className="text-sm font-semibold text-gray-800 mb-2">
+            <h4 className="text-xs sm:text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
               Suggestions
             </h4>
             <ul className="space-y-2">
               {insights.suggestions.map((suggestion, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
-                  <span className="text-blue-500 mt-0.5">💡</span>
+                <li key={index} className="flex items-start gap-2 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
+                  <span className="text-blue-500 dark:text-blue-400 mt-0.5">💡</span>
                   <span>{suggestion}</span>
                 </li>
               ))}

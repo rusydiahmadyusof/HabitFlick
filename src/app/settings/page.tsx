@@ -114,20 +114,20 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-6 sm:py-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Settings</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-50 mb-6 sm:mb-8">Settings</h1>
 
         <div className="space-y-6">
           {/* Export Data Section */}
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-50 mb-4">
               Export Data
             </h2>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm sm:text-base">
               Download your data in various formats for backup or analysis.
             </p>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3">
               <Button
                 onClick={handleExportJSON}
                 disabled={exporting}
@@ -153,8 +153,8 @@ export default function SettingsPage() {
           </Card>
 
           {/* Notifications Section */}
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-50 mb-4">
               Notifications
             </h2>
             <div className="space-y-4">
@@ -178,14 +178,14 @@ export default function SettingsPage() {
           </Card>
 
           {/* Appearance Section */}
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-50 mb-4">
               Appearance
             </h2>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-900">Dark Mode</p>
-                <p className="text-sm text-gray-600">Toggle dark theme</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-50">Dark Mode</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Toggle dark theme</p>
               </div>
               <button
                 onClick={handleToggleDarkMode}
@@ -203,18 +203,18 @@ export default function SettingsPage() {
           </Card>
 
           {/* Account Section */}
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-50 mb-4">
               Account
             </h2>
             <div className="space-y-2">
               <div>
-                <p className="text-sm text-gray-600">Email</p>
-                <p className="text-gray-900">{user?.email || "Not signed in"}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Email</p>
+                <p className="text-gray-900 dark:text-gray-50 break-all">{user?.email || "Not signed in"}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">User ID</p>
-                <p className="text-gray-900 font-mono text-sm">{user?.uid || "N/A"}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">User ID</p>
+                <p className="text-gray-900 dark:text-gray-50 font-mono text-xs sm:text-sm break-all">{user?.uid || "N/A"}</p>
               </div>
             </div>
           </Card>
