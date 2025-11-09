@@ -53,11 +53,12 @@ export default function TestPage() {
         ...prev,
         firebase: app ? "✅ Initialized" : "❌ Not initialized",
       }));
-    } catch (err: any) {
-      console.error("Firebase App Error:", err);
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      console.error("Firebase App Error:", error);
       setStatus((prev) => ({
         ...prev,
-        firebase: `❌ Error: ${err.message}`,
+        firebase: `❌ Error: ${error.message}`,
       }));
     }
 
@@ -70,11 +71,12 @@ export default function TestPage() {
         ...prev,
         auth: auth ? "✅ Initialized" : "❌ Not initialized",
       }));
-    } catch (err: any) {
-      console.error("Firebase Auth Error:", err);
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      console.error("Firebase Auth Error:", error);
       setStatus((prev) => ({
         ...prev,
-        auth: `❌ Error: ${err.message}`,
+        auth: `❌ Error: ${error.message}`,
       }));
     }
 

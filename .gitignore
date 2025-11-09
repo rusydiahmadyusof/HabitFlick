@@ -45,7 +45,12 @@ ui-debug.log
 *.swp
 *.swo
 *~
-env.example
 QUICK_TEST.md
 masterprompt.md
 firestore.rules
+FEATURE_STATUS.md
+REFACTORING_SUMMARY.md
+.gitignore
+FIREBASE_REGION_SETUP.md
+QUICK_START_ASIA.md
+PERFORMANCE_OPTIMIZATION.md

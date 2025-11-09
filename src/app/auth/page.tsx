@@ -3,9 +3,12 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { formatErrorForUser } from "@/lib/errorHandler";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Card from "@/components/ui/Card";
+import Loading from "@/components/ui/Loading";
+import ErrorMessage from "@/components/ui/ErrorMessage";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -23,14 +26,7 @@ export default function AuthPage() {
   }, [user, authLoading, router]);
 
   if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+    return <Loading fullScreen text="Loading..." />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,8 +41,8 @@ export default function AuthPage() {
         await signUp(email, password);
       }
       router.push("/");
-    } catch (err: any) {
-      setError(err.message || "Authentication failed");
+    } catch (err) {
+      setError(formatErrorForUser(err));
     } finally {
       setLoading(false);
     }
@@ -58,8 +54,8 @@ export default function AuthPage() {
     try {
       await signInWithGoogle();
       router.push("/");
-    } catch (err: any) {
-      setError(err.message || "Google sign-in failed");
+    } catch (err) {
+      setError(formatErrorForUser(err));
     } finally {
       setLoading(false);
     }
@@ -73,9 +69,11 @@ export default function AuthPage() {
         </h1>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
-            {error}
-          </div>
+          <ErrorMessage
+            error={error}
+            onDismiss={() => setError(null)}
+            className="mb-4"
+          />
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">

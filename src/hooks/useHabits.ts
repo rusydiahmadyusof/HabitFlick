@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { firestoreHabitAPI } from "@/lib/firestoreApi";
 import { useHabitStore } from "@/store/habitStore";
+import { formatErrorForUser, logError } from "@/lib/errorHandler";
 import type { Habit } from "@/types";
 
 export function useHabits() {
@@ -8,23 +9,20 @@ export function useHabits() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadHabits();
-  }, []);
-
-  const loadHabits = async () => {
+  const loadHabits = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const fetchedHabits = await firestoreHabitAPI.getHabits();
       setHabits(fetchedHabits);
-    } catch (err: any) {
-      setError(err.message || "Failed to load habits");
-      console.error("Error loading habits:", err);
+    } catch (err) {
+      const errorMessage = formatErrorForUser(err);
+      setError(errorMessage);
+      logError(err, "useHabits.loadHabits");
     } finally {
       setLoading(false);
     }
-  };
+  }, [setHabits]);
 
   const createHabit = async (habitData: {
     title: string;
@@ -41,8 +39,10 @@ export function useHabits() {
       const newHabit = await firestoreHabitAPI.createHabit(habitData);
       addHabit(newHabit);
       return newHabit;
-    } catch (err: any) {
-      setError(err.message || "Failed to create habit");
+    } catch (err) {
+      const errorMessage = formatErrorForUser(err);
+      setError(errorMessage);
+      logError(err, "useHabits.createHabit");
       throw err;
     } finally {
       setLoading(false);
@@ -56,8 +56,10 @@ export function useHabits() {
       const updatedHabit = await firestoreHabitAPI.updateHabit(habitId, updates);
       updateHabit(habitId, updatedHabit);
       return updatedHabit;
-    } catch (err: any) {
-      setError(err.message || "Failed to update habit");
+    } catch (err) {
+      const errorMessage = formatErrorForUser(err);
+      setError(errorMessage);
+      logError(err, "useHabits.updateHabit");
       throw err;
     } finally {
       setLoading(false);
@@ -70,8 +72,10 @@ export function useHabits() {
     try {
       await firestoreHabitAPI.deleteHabit(habitId);
       removeHabit(habitId);
-    } catch (err: any) {
-      setError(err.message || "Failed to delete habit");
+    } catch (err) {
+      const errorMessage = formatErrorForUser(err);
+      setError(errorMessage);
+      logError(err, "useHabits.deleteHabit");
       throw err;
     } finally {
       setLoading(false);
@@ -85,13 +89,19 @@ export function useHabits() {
       const completedHabit = await firestoreHabitAPI.completeHabit(habitId, notes);
       updateHabit(habitId, completedHabit);
       return completedHabit;
-    } catch (err: any) {
-      setError(err.message || "Failed to complete habit");
+    } catch (err) {
+      const errorMessage = formatErrorForUser(err);
+      setError(errorMessage);
+      logError(err, "useHabits.completeHabit");
       throw err;
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadHabits();
+  }, [loadHabits]);
 
   return {
     habits,

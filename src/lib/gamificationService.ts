@@ -311,7 +311,7 @@ export async function getUserBadges(): Promise<Badge[]> {
 /**
  * Calculate user level based on total points
  */
-export function calculateLevel(totalPoints: number): { level: number; pointsToNext: number; currentLevelPoints: number } {
+export function calculateLevel(totalPoints: number): { level: number; pointsToNext: number; currentLevelPoints: number; nextLevelPoints: number } {
   // Level formula: level = floor(sqrt(points / 100)) + 1
   // Points needed for level N: (N-1)^2 * 100
   const level = Math.floor(Math.sqrt(totalPoints / 100)) + 1;
@@ -319,6 +319,6 @@ export function calculateLevel(totalPoints: number): { level: number; pointsToNe
   const nextLevelPoints = Math.pow(level, 2) * 100;
   const pointsToNext = nextLevelPoints - totalPoints;
 
-  return { level, pointsToNext, currentLevelPoints };
+  return { level, pointsToNext, currentLevelPoints, nextLevelPoints };
 }
 

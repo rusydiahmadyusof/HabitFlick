@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getUserBadges, calculateLevel } from "@/lib/gamificationService";
 import { getAllBadgeDefinitions } from "@/lib/badges";
 import { BadgeGrid } from "@/components/features/BadgeDisplay";
+import ShareButton from "@/components/features/ShareButton";
 import Card from "@/components/ui/Card";
 import type { Badge } from "@/types";
 import { getBadgeDefinition } from "@/lib/badges";
@@ -105,7 +106,15 @@ export default function BadgesPage() {
 
         {/* Earned Badges */}
         <Card className="p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">Earned Badges ({badges.length})</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Earned Badges ({badges.length})</h2>
+            <ShareButton
+              title="Check out my HabitFlick achievements!"
+              text={`I've earned ${badges.length} badges and reached Level ${level} with ${totalPoints} points! 🏆`}
+              variant="secondary"
+              size="sm"
+            />
+          </div>
           <BadgeGrid badges={earnedBadges} showDescription={true} />
         </Card>
 

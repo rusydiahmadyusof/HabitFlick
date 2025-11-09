@@ -65,9 +65,9 @@ export default function Home() {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
                   {(() => {
-                    const nextLevelPoints = levelInfo.currentLevelPoints + levelInfo.pointsToNext;
+                    // Calculate progress: how many points we have in the current level vs total points needed for the level
                     const pointsInCurrentLevel = totalPoints - levelInfo.currentLevelPoints;
-                    const pointsNeededForLevel = nextLevelPoints - levelInfo.currentLevelPoints;
+                    const pointsNeededForLevel = levelInfo.nextLevelPoints - levelInfo.currentLevelPoints;
                     const progressPercent = Math.min(100, Math.max(0, (pointsInCurrentLevel / pointsNeededForLevel) * 100));
                     
                     return (
@@ -86,7 +86,7 @@ export default function Home() {
                 </div>
                 <div className="flex justify-between mt-2 text-xs text-gray-500">
                   <span>Level {levelInfo.level} start: {levelInfo.currentLevelPoints} pts</span>
-                  <span>Level {levelInfo.level + 1} start: {levelInfo.currentLevelPoints + levelInfo.pointsToNext} pts</span>
+                  <span>Level {levelInfo.level + 1} start: {levelInfo.nextLevelPoints} pts</span>
                 </div>
               </div>
             </Card>

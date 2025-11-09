@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Link from "next/link";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import StreakDisplay from "@/components/features/StreakDisplay";
@@ -63,7 +64,11 @@ export default function HabitCard({
       <div className="p-4">
         <div className="flex items-start justify-between mb-2">
           <div className="flex-1">
-            <h3 className="font-semibold text-lg">{habit.title}</h3>
+            <Link href={`/habits/${habit.id}`}>
+              <h3 className="font-semibold text-lg hover:text-blue-600 cursor-pointer">
+                {habit.title}
+              </h3>
+            </Link>
             {habit.description && (
               <p className="text-gray-600 text-sm mt-1">{habit.description}</p>
             )}

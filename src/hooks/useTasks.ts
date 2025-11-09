@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { firestoreTaskAPI } from "@/lib/firestoreApi";
 import { useTaskStore } from "@/store/taskStore";
+import { formatErrorForUser, logError } from "@/lib/errorHandler";
 import type { Task, TaskStatus } from "@/types";
 
 export function useTasks(status?: TaskStatus) {
@@ -8,23 +9,20 @@ export function useTasks(status?: TaskStatus) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadTasks();
-  }, [status]);
-
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const fetchedTasks = await firestoreTaskAPI.getTasks(status, 100);
       setTasks(fetchedTasks);
-    } catch (err: any) {
-      setError(err.message || "Failed to load tasks");
-      console.error("Error loading tasks:", err);
+    } catch (err) {
+      const errorMessage = formatErrorForUser(err);
+      setError(errorMessage);
+      logError(err, "useTasks.loadTasks");
     } finally {
       setLoading(false);
     }
-  };
+  }, [status, setTasks]);
 
   const createTask = async (taskData: {
     title: string;
@@ -39,8 +37,10 @@ export function useTasks(status?: TaskStatus) {
       const newTask = await firestoreTaskAPI.createTask(taskData);
       addTask(newTask);
       return newTask;
-    } catch (err: any) {
-      setError(err.message || "Failed to create task");
+    } catch (err) {
+      const errorMessage = formatErrorForUser(err);
+      setError(errorMessage);
+      logError(err, "useTasks.createTask");
       throw err;
     } finally {
       setLoading(false);
@@ -54,8 +54,10 @@ export function useTasks(status?: TaskStatus) {
       const updatedTask = await firestoreTaskAPI.updateTask(taskId, updates);
       updateTask(taskId, updatedTask);
       return updatedTask;
-    } catch (err: any) {
-      setError(err.message || "Failed to update task");
+    } catch (err) {
+      const errorMessage = formatErrorForUser(err);
+      setError(errorMessage);
+      logError(err, "useTasks.updateTask");
       throw err;
     } finally {
       setLoading(false);
@@ -68,8 +70,10 @@ export function useTasks(status?: TaskStatus) {
     try {
       await firestoreTaskAPI.deleteTask(taskId);
       removeTask(taskId);
-    } catch (err: any) {
-      setError(err.message || "Failed to delete task");
+    } catch (err) {
+      const errorMessage = formatErrorForUser(err);
+      setError(errorMessage);
+      logError(err, "useTasks.deleteTask");
       throw err;
     } finally {
       setLoading(false);
@@ -83,13 +87,19 @@ export function useTasks(status?: TaskStatus) {
       const completedTask = await firestoreTaskAPI.completeTask(taskId);
       updateTask(taskId, completedTask);
       return completedTask;
-    } catch (err: any) {
-      setError(err.message || "Failed to complete task");
+    } catch (err) {
+      const errorMessage = formatErrorForUser(err);
+      setError(errorMessage);
+      logError(err, "useTasks.completeTask");
       throw err;
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadTasks();
+  }, [loadTasks]);
 
   return {
     tasks,

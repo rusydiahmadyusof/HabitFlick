@@ -1,6 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
-import { getAuth, Auth } from "firebase/auth";
-import { getFirestore, Firestore } from "firebase/firestore";
+import { getAuth, Auth, connectAuthEmulator } from "firebase/auth";
+import { getFirestore, Firestore, connectFirestoreEmulator, enableIndexedDbPersistence } from "firebase/firestore";
 import { getFunctions, Functions } from "firebase/functions";
 
 const firebaseConfig = {
@@ -33,8 +33,9 @@ function getFirebaseApp(): FirebaseApp {
     if (!getApps().length) {
       try {
         app = initializeApp(firebaseConfig);
-      } catch (error: any) {
-        throw new Error(`Failed to initialize Firebase: ${error.message}`);
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        throw new Error(`Failed to initialize Firebase: ${errorMessage}`);
       }
     } else {
       app = getApps()[0];
@@ -47,6 +48,7 @@ function getFirebaseAuth(): Auth {
   if (!auth) {
     const firebaseApp = getFirebaseApp();
     auth = getAuth(firebaseApp);
+    // Auth persistence is enabled by default in Firebase v9+
   }
   return auth;
 }
@@ -55,6 +57,21 @@ function getFirestoreDb(): Firestore {
   if (!db) {
     const firebaseApp = getFirebaseApp();
     db = getFirestore(firebaseApp);
+    
+    // Enable offline persistence for better performance and offline support
+    if (typeof window !== "undefined") {
+      enableIndexedDbPersistence(db).catch((err) => {
+        if (err.code === "failed-precondition") {
+          // Multiple tabs open, persistence can only be enabled in one tab at a time
+          console.warn("Firestore persistence already enabled in another tab");
+        } else if (err.code === "unimplemented") {
+          // Browser doesn't support persistence
+          console.warn("Firestore persistence not supported in this browser");
+        } else {
+          console.error("Firestore persistence error:", err);
+        }
+      });
+    }
   }
   return db;
 }
@@ -62,8 +79,12 @@ function getFirestoreDb(): Firestore {
 function getFirebaseFunctions(): Functions {
   if (!functions) {
     const firebaseApp = getFirebaseApp();
-    // Explicitly set region to match backend (us-central1)
-    functions = getFunctions(firebaseApp, "us-central1");
+    // Set region to match your Firestore region for best performance
+    // Available regions: us-central1, us-east1, us-west1, europe-west1, 
+    // asia-northeast1, asia-southeast1, etc.
+    // Default: asia-southeast1 (Singapore) for Southeast Asian users
+    const region = process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_REGION || "asia-southeast1";
+    functions = getFunctions(firebaseApp, region);
   }
   return functions;
 }
@@ -75,4 +96,3 @@ if (typeof window !== "undefined") {
 
 // Export getters only (true lazy initialization)
 export { getFirebaseApp, getFirebaseAuth, getFirestoreDb, getFirebaseFunctions };
-

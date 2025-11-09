@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Link from "next/link";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import type { Task } from "@/types";
@@ -46,13 +47,15 @@ export default function TaskCard({
       <div className="p-4">
         <div className="flex items-start justify-between mb-2">
           <div className="flex-1">
-            <h3
-              className={`font-semibold text-lg ${
-                task.status === "completed" ? "line-through" : ""
-              }`}
-            >
-              {task.title}
-            </h3>
+            <Link href={`/tasks/${task.id}`}>
+              <h3
+                className={`font-semibold text-lg hover:text-blue-600 cursor-pointer ${
+                  task.status === "completed" ? "line-through" : ""
+                }`}
+              >
+                {task.title}
+              </h3>
+            </Link>
             {task.description && (
               <p className="text-gray-600 text-sm mt-1">{task.description}</p>
             )}
